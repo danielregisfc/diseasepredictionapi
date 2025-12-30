@@ -1,6 +1,20 @@
+from flask import Flask, jsonify
 
-def main():
-    print("API de Predição de Doenças - Projeto iniciado com sucesso!")
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return jsonify({
+        "message":"Api de Predição de Doenças está ativa."
+
+    })
+
+@app.route("/services")
+def service():
+    return jsonify({
+        "status":"ok",
+        "service":"disease-prediction-api"
+    })
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
