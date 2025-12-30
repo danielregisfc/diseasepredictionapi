@@ -1,38 +1,25 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
+from app.config import Config
+from app.routes.predict import predict_bp
 
-app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return jsonify({
-        "message":"Api de Predição de Doenças está ativa."
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-    })
+    app.register_blueprint(predict_bp)
 
-@app.route("/services")
-def service():
-    return jsonify({
-        "status":"ok",
-        "service":"disease-prediction-api"
-    })
+    @app.route("/")
+    def index():
+        return jsonify({"message": "API de predição está ativa"})
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    data = request.get_json()
+    @app.route("/status")
+    def status():
+        return jsonify({"status": "ok"})
 
-    required_fields = ["age", "blood_pressure", "cholesterol"]
+    return app
 
-    if not data:
-        return jsonify({"error": "JSON inválido ou vazio"}), 400
-
-    for field in required_fields:
-        if field not in data:
-            return jsonify({"error": f"Campo obrigatório ausente: {field}"}), 400
-
-    return jsonify({
-        "message": "Dados válidos recebidos",
-        "input": data
-    })
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app = create_app()
+    app.run()
